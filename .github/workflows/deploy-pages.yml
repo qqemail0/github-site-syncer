@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
+  deployments: read
   pages: write
   id-token: write
 
@@ -34,6 +38,12 @@ jobs:
             .replace('staticMode: false', 'staticMode: true');
           fs.writeFileSync(file, text);
           NODE
+
+      - name: Build site snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER: qqemail0
+        run: node scripts/build-static-sites.mjs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

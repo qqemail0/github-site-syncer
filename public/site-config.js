@@ -12,6 +12,11 @@ window.SITE_SYNCER_CONFIG = {
       pagesUrl: "https://qqemail0.github.io/cyber-music-room/",
       cname: "",
       httpsEnforced: true
+    },
+    "qqemail0/github-site-syncer": {
+      pagesUrl: "https://qqemail0.github.io/github-site-syncer/",
+      cname: "",
+      httpsEnforced: true
     }
   }
 };

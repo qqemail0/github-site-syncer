@@ -158,7 +158,11 @@ function renderSyncBadge() {
     return;
   }
 
-  els.syncBadge.textContent = state.source === "github-public" ? "公开 API" : "自动同步";
+  if (state.source === "static-snapshot") {
+    els.syncBadge.textContent = "Actions 快照";
+  } else {
+    els.syncBadge.textContent = state.source === "github-public" ? "公开 API" : "自动同步";
+  }
 }
 
 function renderSites() {
@@ -199,7 +203,11 @@ function render() {
 
 async function loadSites() {
   if (config.staticMode || state.backendAvailable === false || location.hostname.endsWith("github.io")) {
-    await syncPublicGitHub(false);
+    try {
+      await loadStaticSnapshot(false);
+    } catch {
+      await syncPublicGitHub(false);
+    }
     return;
   }
 
@@ -213,7 +221,11 @@ async function loadSites() {
     render();
   } catch {
     state.backendAvailable = false;
-    await syncPublicGitHub(false);
+    try {
+      await loadStaticSnapshot(false);
+    } catch {
+      await syncPublicGitHub(false);
+    }
   }
 }
 
@@ -222,7 +234,11 @@ async function syncNow() {
   renderSyncBadge();
   try {
     if (config.staticMode || state.backendAvailable === false || location.hostname.endsWith("github.io")) {
-      await syncPublicGitHub(true);
+      try {
+        await loadStaticSnapshot(true);
+      } catch {
+        await syncPublicGitHub(true);
+      }
       return;
     }
     const response = await fetch("/api/sync", { cache: "no-store" });
@@ -235,18 +251,41 @@ async function syncNow() {
   } catch (error) {
     state.backendAvailable = false;
     try {
-      await syncPublicGitHub(true);
+      await loadStaticSnapshot(true);
     } catch (publicError) {
-      state.payload = state.payload || {};
-      state.payload.sync = {
-        lastError: publicError.message || error.message || String(error)
-      };
-      renderSyncBadge();
+      try {
+        await syncPublicGitHub(true);
+      } catch (fallbackError) {
+        state.payload = fallbackKnownPages(publicError.message || fallbackError.message || error.message || String(error));
+        state.sites = state.payload.sites;
+        render();
+      }
     }
   } finally {
     state.syncing = false;
     renderSyncBadge();
   }
+}
+
+async function loadStaticSnapshot(force) {
+  const response = await fetch(`sites-static.json${force ? `?t=${Date.now()}` : ""}`, {
+    cache: "no-store"
+  });
+  if (!response.ok) throw new Error(`Static snapshot ${response.status}`);
+  const payload = await response.json();
+  if (!payload || !Array.isArray(payload.sites)) throw new Error("Static snapshot is invalid");
+  state.source = "static-snapshot";
+  state.payload = {
+    ...payload,
+    sync: {
+      ...(payload.sync || {}),
+      running: false,
+      lastError: null,
+      intervalMs: payload.sync && payload.sync.intervalMs ? payload.sync.intervalMs : 30 * 60 * 1000
+    }
+  };
+  state.sites = state.payload.sites;
+  render();
 }
 
 function apiHeaders() {
@@ -364,7 +403,16 @@ async function syncPublicGitHub(force) {
   state.source = "github-public";
   const owner = new URLSearchParams(location.search).get("owner") || config.owner || "qqemail0";
   const limit = Number(config.repoLimit || 80);
-  const repos = await githubJson(`https://api.github.com/users/${owner}/repos?per_page=${Math.min(limit, 100)}&sort=pushed&type=owner`);
+  let repos;
+  try {
+    repos = await githubJson(`https://api.github.com/users/${owner}/repos?per_page=${Math.min(limit, 100)}&sort=pushed&type=owner`);
+  } catch (error) {
+    state.payload = fallbackKnownPages(error.message || "GitHub public API unavailable");
+    state.sites = state.payload.sites;
+    render();
+    return;
+  }
+
   const sites = await publicMapLimit(repos.slice(0, limit), 4, (repo) => publicSiteFromRepo(owner, repo));
   state.payload = {
     account: owner,
@@ -383,6 +431,47 @@ async function syncPublicGitHub(force) {
   };
   state.sites = state.payload.sites;
   render();
+}
+
+function fallbackKnownPages(reason) {
+  const now = new Date().toISOString();
+  const owner = config.owner || "qqemail0";
+  const known = config.knownPages || {};
+  const sites = Object.entries(known).map(([nameWithOwner, item]) => ({
+    nameWithOwner,
+    repoUrl: `https://github.com/${nameWithOwner}`,
+    description: "Known GitHub Pages site",
+    isPrivate: false,
+    pushedAt: now,
+    language: null,
+    pagesUrl: item.pagesUrl,
+    cname: item.cname || "",
+    status: "known",
+    buildType: "static-fallback",
+    httpsEnforced: Boolean(item.httpsEnforced),
+    source: { branch: "main", path: "/" },
+    latestRun: null,
+    live: {
+      ok: true,
+      status: null,
+      staticOnly: true,
+      checkedAt: now
+    }
+  }));
+
+  return {
+    account: owner,
+    syncedAt: now,
+    ghPath: "Static known pages fallback",
+    repoLimit: sites.length,
+    sync: {
+      running: false,
+      lastError: reason || null,
+      lastStartedAt: now,
+      intervalMs: 30 * 60 * 1000
+    },
+    sites
+  };
 }
 
 els.searchInput.addEventListener("input", (event) => {

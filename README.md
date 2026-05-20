@@ -40,3 +40,5 @@ http://127.0.0.1:8091/
 - 不暴露 GitHub Token
 
 如果要修改默认账号，编辑 `public/site-config.js` 里的 `owner`。
+
+为避免浏览器端 GitHub API 触发未授权限流，部署工作流会先运行 `scripts/build-static-sites.mjs`，生成 `public/sites-static.json`。线上页面优先读取这个快照；工作流每 30 分钟自动刷新一次，也可以在 Actions 页面手动运行。
