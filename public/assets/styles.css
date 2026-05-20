@@ -406,6 +406,31 @@ iframe {
   display: none;
 }
 
+.source-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(16, 20, 30, 0.72);
+  color: var(--muted);
+  box-shadow: var(--shadow);
+}
+
+.source-footer a {
+  color: var(--cyan);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.source-footer a:hover {
+  color: var(--mint);
+}
+
 @media (max-width: 980px) {
   .topbar,
   .preview-head {

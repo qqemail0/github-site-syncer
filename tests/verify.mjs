@@ -42,6 +42,7 @@ const checks = [
   [app.includes("previewFrame"), "client must render iframe preview"],
   [app.includes("syncNow"), "client must support manual sync"],
   [html.includes("GitHub 网站同步器"), "HTML title must match product"],
+  [html.includes("https://github.com/qqemail0/github-site-syncer"), "HTML must include open source repository link"],
   [html.includes("site-config.js"), "HTML must load deployment config"],
   [config.includes("owner: \"qqemail0\""), "config must set default GitHub owner"],
   [config.includes("knownPages"), "config must include known deployed Pages URLs"],
