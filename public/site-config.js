@@ -14,8 +14,8 @@ window.SITE_SYNCER_CONFIG = {
       httpsEnforced: true
     },
     "qqemail0/github-site-syncer": {
-      pagesUrl: "https://qqemail0.github.io/github-site-syncer/",
-      cname: "",
+      pagesUrl: "https://admin.pupwho.eu.org/",
+      cname: "admin.pupwho.eu.org",
       httpsEnforced: true
     }
   }

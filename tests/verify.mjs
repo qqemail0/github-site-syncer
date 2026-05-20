@@ -9,6 +9,7 @@ const required = [
   "package.json",
   ".github/workflows/deploy-pages.yml",
   "public/index.html",
+  "public/CNAME",
   "public/site-config.js",
   "public/assets/styles.css",
   "public/assets/app.js",
@@ -26,6 +27,7 @@ const server = await readFile(path.join(root, "server.js"), "utf8");
 const app = await readFile(path.join(root, "public/assets/app.js"), "utf8");
 const html = await readFile(path.join(root, "public/index.html"), "utf8");
 const config = await readFile(path.join(root, "public/site-config.js"), "utf8");
+const cname = await readFile(path.join(root, "public/CNAME"), "utf8");
 const workflow = await readFile(path.join(root, ".github/workflows/deploy-pages.yml"), "utf8");
 const buildScript = await readFile(path.join(root, "scripts/build-static-sites.mjs"), "utf8");
 
@@ -43,6 +45,8 @@ const checks = [
   [html.includes("site-config.js"), "HTML must load deployment config"],
   [config.includes("owner: \"qqemail0\""), "config must set default GitHub owner"],
   [config.includes("knownPages"), "config must include known deployed Pages URLs"],
+  [config.includes("admin.pupwho.eu.org"), "config must use custom syncer domain"],
+  [cname.trim() === "admin.pupwho.eu.org", "CNAME must bind custom syncer domain"],
   [workflow.includes("actions/deploy-pages"), "workflow must deploy to GitHub Pages"],
   [workflow.includes("scripts/build-static-sites.mjs"), "workflow must build static snapshot"],
   [workflow.includes("*/30 * * * *"), "workflow must refresh snapshot on a schedule"],
