@@ -2,6 +2,10 @@
 
 一个本地 GitHub Pages 控制台：自动读取当前 GitHub CLI 登录账号，扫描已启用 GitHub Pages 的仓库，显示线上地址、部署状态、HTTPS 状态和网页预览。
 
+## 线上访问
+
+GitHub Pages: https://admin.pupwho.eu.org/
+
 ## 运行
 
 ```powershell

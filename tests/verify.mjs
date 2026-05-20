@@ -26,6 +26,7 @@ for (const file of required) {
 const server = await readFile(path.join(root, "server.js"), "utf8");
 const app = await readFile(path.join(root, "public/assets/app.js"), "utf8");
 const html = await readFile(path.join(root, "public/index.html"), "utf8");
+const readme = await readFile(path.join(root, "README.md"), "utf8");
 const config = await readFile(path.join(root, "public/site-config.js"), "utf8");
 const cname = await readFile(path.join(root, "public/CNAME"), "utf8");
 const workflow = await readFile(path.join(root, ".github/workflows/deploy-pages.yml"), "utf8");
@@ -43,6 +44,7 @@ const checks = [
   [app.includes("syncNow"), "client must support manual sync"],
   [html.includes("GitHub 网站同步器"), "HTML title must match product"],
   [html.includes("https://github.com/qqemail0/github-site-syncer"), "HTML must include open source repository link"],
+  [readme.includes("https://admin.pupwho.eu.org/"), "README must declare deployed GitHub Pages URL"],
   [html.includes("site-config.js"), "HTML must load deployment config"],
   [config.includes("owner: \"qqemail0\""), "config must set default GitHub owner"],
   [config.includes("knownPages"), "config must include known deployed Pages URLs"],
