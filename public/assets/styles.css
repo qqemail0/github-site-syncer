@@ -113,6 +113,32 @@ h3 {
   justify-content: flex-end;
 }
 
+.repo-orb {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(33, 212, 253, 0.72);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.28), transparent 24%),
+    linear-gradient(135deg, rgba(33, 212, 253, 0.18), rgba(109, 255, 178, 0.16)),
+    rgba(10, 14, 22, 0.88);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: inset 0 0 16px rgba(33, 212, 253, 0.16), 0 14px 34px rgba(0, 0, 0, 0.22);
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.repo-orb:hover {
+  transform: translateY(-1px);
+  border-color: var(--mint);
+  box-shadow: inset 0 0 18px rgba(109, 255, 178, 0.18), 0 16px 38px rgba(33, 212, 253, 0.22);
+}
+
 .search-box {
   display: flex;
   align-items: center;
@@ -407,27 +433,58 @@ iframe {
 }
 
 .source-footer {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 16px;
   margin-top: 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 14px;
-  background: rgba(16, 20, 30, 0.72);
+  padding: 16px;
+  background:
+    linear-gradient(135deg, rgba(33, 212, 253, 0.08), transparent 34%),
+    linear-gradient(315deg, rgba(109, 255, 178, 0.08), transparent 38%),
+    rgba(16, 20, 30, 0.72);
   color: var(--muted);
   box-shadow: var(--shadow);
 }
 
-.source-footer a {
+.source-footer-copy span {
+  display: block;
+  margin-bottom: 4px;
   color: var(--cyan);
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.source-footer-copy strong {
+  display: block;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.source-footer-copy p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.source-footer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border: 1px solid rgba(33, 212, 253, 0.68);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: rgba(33, 212, 253, 0.12);
+  color: var(--text);
+  font-weight: 900;
   text-decoration: none;
 }
 
-.source-footer a:hover {
+.source-footer-link:hover {
+  border-color: var(--mint);
   color: var(--mint);
 }
 
@@ -441,6 +498,14 @@ iframe {
   .actions,
   .preview-actions {
     justify-content: flex-start;
+  }
+
+  .source-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .source-footer-link {
+    width: 100%;
   }
 
   .status-strip {

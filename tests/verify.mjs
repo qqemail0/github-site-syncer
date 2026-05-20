@@ -44,6 +44,8 @@ const checks = [
   [app.includes("syncNow"), "client must support manual sync"],
   [html.includes("GitHub 网站同步器"), "HTML title must match product"],
   [html.includes("https://github.com/qqemail0/github-site-syncer"), "HTML must include open source repository link"],
+  [html.includes("repo-orb"), "HTML must include top-right circular repository link"],
+  [html.includes("source-footer-link"), "HTML must include styled footer repository button"],
   [readme.includes("https://admin.pupwho.eu.org/"), "README must declare deployed GitHub Pages URL"],
   [html.includes("site-config.js"), "HTML must load deployment config"],
   [config.includes("owner: \"qqemail0\""), "config must set default GitHub owner"],
