@@ -1,0 +1,21 @@
+{
+  "name": "github-site-syncer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local GitHub Pages dashboard that syncs deployed sites through GitHub CLI.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/verify.mjs"
+  },
+  "keywords": [
+    "github-pages",
+    "dashboard",
+    "syncer"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

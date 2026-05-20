@@ -1,0 +1,49 @@
+import { readFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const required = [
+  "server.js",
+  "package.json",
+  ".github/workflows/deploy-pages.yml",
+  "public/index.html",
+  "public/site-config.js",
+  "public/assets/styles.css",
+  "public/assets/app.js"
+];
+
+for (const file of required) {
+  const fullPath = path.join(root, file);
+  if (!existsSync(fullPath)) {
+    throw new Error(`Missing required file: ${file}`);
+  }
+}
+
+const server = await readFile(path.join(root, "server.js"), "utf8");
+const app = await readFile(path.join(root, "public/assets/app.js"), "utf8");
+const html = await readFile(path.join(root, "public/index.html"), "utf8");
+const config = await readFile(path.join(root, "public/site-config.js"), "utf8");
+const workflow = await readFile(path.join(root, ".github/workflows/deploy-pages.yml"), "utf8");
+
+const checks = [
+  [server.includes("repos/${nameWithOwner}/pages"), "server must read GitHub Pages API"],
+  [server.includes("/api/sync"), "server must expose sync API"],
+  [server.includes("setInterval"), "server must auto-sync"],
+  [app.includes("syncPublicGitHub"), "client must support GitHub Pages static mode"],
+  [app.includes("api.github.com/users"), "client must read public GitHub API in static mode"],
+  [app.includes("previewFrame"), "client must render iframe preview"],
+  [app.includes("syncNow"), "client must support manual sync"],
+  [html.includes("GitHub 网站同步器"), "HTML title must match product"],
+  [html.includes("site-config.js"), "HTML must load deployment config"],
+  [config.includes("owner: \"qqemail0\""), "config must set default GitHub owner"],
+  [config.includes("knownPages"), "config must include known deployed Pages URLs"],
+  [workflow.includes("actions/deploy-pages"), "workflow must deploy to GitHub Pages"]
+];
+
+for (const [ok, message] of checks) {
+  if (!ok) throw new Error(message);
+}
+
+console.log("OK: GitHub site syncer files verified.");

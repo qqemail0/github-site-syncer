@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub 网站同步器</title>
+  <meta name="description" content="自动同步 GitHub Pages 部署站点，查看部署状态并直接预览线上网页。">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="eyebrow">GitHub Pages Control</p>
+          <h1>GitHub 网站同步器</h1>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="search-box">
+          <span>搜索</span>
+          <input id="searchInput" type="search" placeholder="仓库名 / 域名 / 状态">
+        </label>
+        <button id="syncButton" type="button">立即同步</button>
+      </div>
+    </header>
+
+    <section class="status-strip" aria-label="同步状态">
+      <div class="metric">
+        <span>站点</span>
+        <strong id="totalSites">0</strong>
+      </div>
+      <div class="metric">
+        <span>可访问</span>
+        <strong id="onlineSites">0</strong>
+      </div>
+      <div class="metric">
+        <span>自定义域名</span>
+        <strong id="customDomains">0</strong>
+      </div>
+      <div class="metric wide">
+        <span>最近同步</span>
+        <strong id="lastSync">等待同步</strong>
+      </div>
+      <div id="syncBadge" class="sync-badge">待机</div>
+    </section>
+
+    <main class="workspace">
+      <aside class="site-panel" aria-label="GitHub Pages 站点列表">
+        <div class="panel-head">
+          <h2>已部署网页</h2>
+          <span id="accountName">未连接</span>
+        </div>
+        <div id="siteList" class="site-list"></div>
+      </aside>
+
+      <section class="preview-panel" aria-label="网页预览">
+        <div class="preview-head">
+          <div>
+            <p id="selectedRepo" class="eyebrow">选择一个站点</p>
+            <h2 id="selectedTitle">线上网页预览</h2>
+            <p id="selectedUrl" class="muted">同步后会在这里显示你 GitHub 上部署的网页。</p>
+          </div>
+          <div class="preview-actions">
+            <a id="openSite" class="ghost-link disabled" href="#" target="_blank" rel="noreferrer">打开网站</a>
+            <a id="openRepo" class="ghost-link disabled" href="#" target="_blank" rel="noreferrer">打开仓库</a>
+            <a id="openActions" class="ghost-link disabled" href="#" target="_blank" rel="noreferrer">Actions</a>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div>
+            <span>Pages 状态</span>
+            <strong id="pagesStatus">-</strong>
+          </div>
+          <div>
+            <span>HTTPS</span>
+            <strong id="httpsStatus">-</strong>
+          </div>
+          <div>
+            <span>最近部署</span>
+            <strong id="deployStatus">-</strong>
+          </div>
+          <div>
+            <span>访问探测</span>
+            <strong id="liveStatus">-</strong>
+          </div>
+        </div>
+
+        <div class="frame-wrap">
+          <iframe id="previewFrame" title="GitHub Pages 线上预览" src="about:blank"></iframe>
+          <div id="emptyState" class="empty-state">
+            <h3>等待 GitHub Pages 数据</h3>
+            <p>点击“立即同步”，同步器会读取当前 GitHub CLI 登录账号下已启用 Pages 的仓库。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="siteItemTemplate">
+    <button class="site-item" type="button">
+      <span class="status-dot"></span>
+      <span class="site-copy">
+        <strong class="site-name"></strong>
+        <span class="site-url"></span>
+        <span class="site-meta"></span>
+      </span>
+    </button>
+  </template>
+
+  <script src="site-config.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
